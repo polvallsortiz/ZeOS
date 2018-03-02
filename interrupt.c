@@ -29,8 +29,7 @@ char char_map[] =
   '\0','\0'
 };
 
-void keyboard_handler()
-
+void keyboard_handler();
 
 void setInterruptHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 {
@@ -91,11 +90,12 @@ void setIdt()
 }
 
 void keyboard_routine() {
-  unsigned char c = inb(0x60);
+  printc_xy(200,200,"H");
+  /*unsigned char c = inb(0x60);
   char mask = 0b10000000;
   if(c & mask == 0) {
       char aux = char_map[c&0b01111111];
       if (aux!='\0') printc_xy(0,0,aux);
-      else printc_xy(0,0,'C');
-  }
+      else printc_xy(200,200,'C');
+  }*/
 }
