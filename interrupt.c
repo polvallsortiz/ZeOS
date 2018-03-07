@@ -89,7 +89,7 @@ void setIdt()
   set_idt_reg(&idtR);
 }
 
-void keyboard_routine(void) {
+void keyboard_routine() {
   printc_xy(0,0,'T');
   /*unsigned char c = inb(0x60);
   char mask = 0b10000000;

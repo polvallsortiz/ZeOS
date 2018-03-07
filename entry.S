@@ -60,24 +60,19 @@
       popl %edi;  \
       popl %ebp;  \
       popl %eax;  \
-      popl %gs;   \
-      popl %fs;   \
+      popl %ds;   \
       popl %es;   \
-      popl %ds;
-      CALL print_debug_routine;\
-      /** PUTS A 'F'**/
+      popl %fs;   \
+      popl %gs
 
 #define EOI \
       movb $0x20, %al; \
-      CALL print_debug_routine2;
       outb %al, $0x20;
 
 
-ENTRY (keyboard_handler)
-      SAVE_ALL;
-      CALL print_debug_routine;
-      EOI;
-      CALL keyboard_routine;
-      /** PUTS A 'T' **/
-      RESTORE_ALL;
-      iret;
+ENTRY (keyboard_handler); \
+      SAVE_ALL; \
+      EOI;  \
+      CALL keyboard_routine;  \
+      RESTORE_ALL;  \
+      ret
