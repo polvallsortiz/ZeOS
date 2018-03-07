@@ -35,8 +35,8 @@
 /**                                              **/
 /**************************************************/
 
-#define SAVE_ALL
-      pushl %gs;
+#define SAVE_ALL \
+      pushl %gs; \
       pushl %fs; \
       pushl %es; \
       pushl %ds; \
@@ -70,9 +70,24 @@
       outb %al, $0x20;
 
 
-ENTRY (keyboard_handler); \
-      SAVE_ALL; \
-      EOI;  \
-      CALL keyboard_routine;  \
-      RESTORE_ALL;  \
-      ret
+ENTRY (keyboard_handler)
+      SAVE_ALL
+      EOI
+      CALL keyboard_routine
+      RESTORE_ALL
+      iret
+
+ENTRY (system_call_handler)
+      SAVE_ALL
+      cmpl $0, %eax
+      jl err
+      cmpl $MAX_SYSCALL, %eax
+      jg err
+      call *sys_call_table(,%eax,0x04)
+      jmp fin
+      err:
+      movl $-ENOSYS,%eax
+      fin:
+      movl %eax, 0x18(%esp)
+      RESTORE_ALL
+      iret

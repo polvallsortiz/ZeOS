@@ -30,6 +30,8 @@ char char_map[] =
 };
 
 void keyboard_handler();
+void system_call_handler();
+
 
 void setInterruptHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
 {
@@ -86,24 +88,15 @@ void setIdt()
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33,keyboard_handler,0);
+  setTrapHandler(0x80,system_call_handler,3);
   set_idt_reg(&idtR);
 }
 
 void keyboard_routine() {
-  printc_xy(0,0,'T');
-  /*unsigned char c = inb(0x60);
-  char mask = 0b10000000;
-  if(c & mask == 0) {
+  unsigned char c = inb(0x60);
+  if(c  < 0b10000000) {
       char aux = char_map[c&0b01111111];
       if (aux!='\0') printc_xy(0,0,aux);
-      else printc_xy(200,200,'C');
-  }*/
-}
-
-void print_debug_routine(void) {
-  printc_xy(0,0,'F');
-}
-
-void print_debug_routine2(void) {
-  printc_xy(0,0,'S');
+      else printc_xy(0,0,'C');
+  }
 }
