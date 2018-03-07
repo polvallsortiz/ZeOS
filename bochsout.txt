@@ -31,7 +31,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7fd8b8541010. after alignment, vector=0x7fd8b8542000
+00000000000i[MEM0  ] allocated memory at 0x7fcfa05dd010. after alignment, vector=0x7fcfa05de000
 00000000000i[MEM0  ] 16,00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=128
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Mar  2 15:52:00 2018 (time0=1520002320)
+00000000000i[CMOS  ] Setting initial clock to: Wed Mar  7 12:00:02 2018 (time0=1520420402)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -146,46 +146,46 @@
 00000000000i[GDBST ] addr 000000000000fff0 len 8
 00000000000i[GDBST ] addr 000000000000fff0 len 7
 00000004662i[BIOS  ] $Revision: 13073 $ $Date: 2017-02-16 22:43:52 +0100 (Do, 16. Feb 2017) $
-00000319068i[KBD   ] reset-disable command received
-00000321799i[BIOS  ] Starting rombios32
-00000322237i[BIOS  ] Shutdown flag 0
-00000322821i[BIOS  ] ram_size=0x01000000
-00000323242i[BIOS  ] ram_end=16MB
-00000363790i[BIOS  ] Found 1 cpu(s)
-00000377374i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000605808i[XGUI  ] charmap update. Font is 9 x 16
-00000705169i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001033098i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
-00001033117i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
-00001033136i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
-00001033155i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
-00001033165i[P2ISA ] write: ELCR2 = 0x0a
-00001033935i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
-00001041616i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
-00001043895i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
-00001046013i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
-00001046242i[PIDE  ] new BM-DMA address: 0xc000
-00001046858i[BIOS  ] region 4: 0x0000c000
-00001048895i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
-00001049127i[ACPI  ] new irq line = 11
-00001049139i[ACPI  ] new irq line = 9
-00001049164i[ACPI  ] new PM base address: 0xb000
-00001049178i[ACPI  ] new SM base address: 0xb100
-00001049206i[PCI   ] setting SMRAM control register to 0x4a
-00001213299i[CPU0  ] Enter to System Management Mode
-00001213310i[CPU0  ] RSM: Resuming from System Management Mode
-00001377331i[PCI   ] setting SMRAM control register to 0x0a
-00001392197i[BIOS  ] MP table addr=0x000f9db0 MPC table addr=0x000f9ce0 size=0xc8
-00001394019i[BIOS  ] SMBIOS table addr=0x000f9dc0
-00001396187i[BIOS  ] ACPI tables: RSDP addr=0x000f9ee0 ACPI DATA addr=0x00ff0000 size=0xf72
-00001399377i[BIOS  ] Firmware waking vector 0xff00cc
-00001401172i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
-00001401895i[BIOS  ] bios_table_cur_addr: 0x000f9f04
-00001529512i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
-00001529583i[BXVGA ] VBE known Display Interface b0c0
-00001529615i[BXVGA ] VBE known Display Interface b0c5
-00001532540i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00002348160i[XGUI  ] charmap update. Font is 9 x 16
+00000318050i[KBD   ] reset-disable command received
+00000320819i[BIOS  ] Starting rombios32
+00000321257i[BIOS  ] Shutdown flag 0
+00000321841i[BIOS  ] ram_size=0x01000000
+00000322262i[BIOS  ] ram_end=16MB
+00000362830i[BIOS  ] Found 1 cpu(s)
+00000376414i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
+00000615656i[XGUI  ] charmap update. Font is 9 x 16
+00000704209i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001032138i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
+00001032157i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
+00001032176i[P2ISA ] PCI IRQ routing: PIRQC# set to 0x0b
+00001032195i[P2ISA ] PCI IRQ routing: PIRQD# set to 0x09
+00001032205i[P2ISA ] write: ELCR2 = 0x0a
+00001032975i[BIOS  ] PIIX3/PIIX4 init: elcr=00 0a
+00001040656i[BIOS  ] PCI: bus=0 devfn=0x00: vendor_id=0x8086 device_id=0x1237 class=0x0600
+00001042935i[BIOS  ] PCI: bus=0 devfn=0x08: vendor_id=0x8086 device_id=0x7000 class=0x0601
+00001045053i[BIOS  ] PCI: bus=0 devfn=0x09: vendor_id=0x8086 device_id=0x7010 class=0x0101
+00001045282i[PIDE  ] new BM-DMA address: 0xc000
+00001045898i[BIOS  ] region 4: 0x0000c000
+00001047935i[BIOS  ] PCI: bus=0 devfn=0x0b: vendor_id=0x8086 device_id=0x7113 class=0x0680
+00001048167i[ACPI  ] new irq line = 11
+00001048179i[ACPI  ] new irq line = 9
+00001048204i[ACPI  ] new PM base address: 0xb000
+00001048218i[ACPI  ] new SM base address: 0xb100
+00001048246i[PCI   ] setting SMRAM control register to 0x4a
+00001212339i[CPU0  ] Enter to System Management Mode
+00001212350i[CPU0  ] RSM: Resuming from System Management Mode
+00001376371i[PCI   ] setting SMRAM control register to 0x0a
+00001391237i[BIOS  ] MP table addr=0x000f9db0 MPC table addr=0x000f9ce0 size=0xc8
+00001393059i[BIOS  ] SMBIOS table addr=0x000f9dc0
+00001395227i[BIOS  ] ACPI tables: RSDP addr=0x000f9ee0 ACPI DATA addr=0x00ff0000 size=0xf72
+00001398417i[BIOS  ] Firmware waking vector 0xff00cc
+00001400212i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
+00001400935i[BIOS  ] bios_table_cur_addr: 0x000f9f04
+00001528552i[VBIOS ] VGABios $Id: vgabios.c,v 1.76 2013/02/10 08:07:03 vruppert Exp $
+00001528623i[BXVGA ] VBE known Display Interface b0c0
+00001528655i[BXVGA ] VBE known Display Interface b0c5
+00001531580i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
+00002217188i[XGUI  ] charmap update. Font is 9 x 16
 00014040183i[BIOS  ] Booting from 0000:7c00
 00029730809i[FLOPPY] partial read() on floppy image returns 260/512
 00029775253i[FLOPPY] read() on floppy image returns 0
@@ -219,6 +219,7 @@
 00031023166i[FLOPPY] read() on floppy image returns 0
 00031067610i[FLOPPY] read() on floppy image returns 0
 00031112054i[FLOPPY] read() on floppy image returns 0
-00051177015i[GDBST ] stopped with ac0
-00051177015i[GDBST ] addr 0000000000011689 len 1
-00051177015i[GDBST ] addr 0000000000011680 len 40
+00215521192e[CPU0  ] iret: return CS selector null
+00215521193i[GDBST ] stopped with ac0
+00215521193i[GDBST ] addr 00000000000116a0 len 1
+00215521193i[GDBST ] addr 0000000000011680 len 40

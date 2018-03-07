@@ -89,8 +89,8 @@ void setIdt()
   set_idt_reg(&idtR);
 }
 
-void keyboard_routine() {
-  printc_xy(200,200,"H");
+void keyboard_routine(void) {
+  printc_xy(0,0,'T');
   /*unsigned char c = inb(0x60);
   char mask = 0b10000000;
   if(c & mask == 0) {
@@ -98,4 +98,12 @@ void keyboard_routine() {
       if (aux!='\0') printc_xy(0,0,aux);
       else printc_xy(200,200,'C');
   }*/
+}
+
+void print_debug_routine(void) {
+  printc_xy(0,0,'F');
+}
+
+void print_debug_routine2(void) {
+  printc_xy(0,0,'S');
 }

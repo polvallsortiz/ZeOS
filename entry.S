@@ -35,8 +35,8 @@
 /**                                              **/
 /**************************************************/
 
-#define SAVE_ALL \
-      pushl %gs; \
+#define SAVE_ALL
+      pushl %gs;
       pushl %fs; \
       pushl %es; \
       pushl %ds; \
@@ -60,19 +60,24 @@
       popl %edi;  \
       popl %ebp;  \
       popl %eax;  \
-      popl %ds;   \
-      popl %es;   \
+      popl %gs;   \
       popl %fs;   \
-      popl %gs;
+      popl %es;   \
+      popl %ds;
+      CALL print_debug_routine;\
+      /** PUTS A 'F'**/
 
 #define EOI \
-      movb 0x20, %al; \
+      movb $0x20, %al; \
+      CALL print_debug_routine2;
       outb %al, $0x20;
 
 
 ENTRY (keyboard_handler)
-      SAVE_ALL
-      EOI
-      CALL keyboard_routine
-      RESTORE_ALL
-      iret
+      SAVE_ALL;
+      CALL print_debug_routine;
+      EOI;
+      CALL keyboard_routine;
+      /** PUTS A 'T' **/
+      RESTORE_ALL;
+      iret;
