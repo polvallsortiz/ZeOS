@@ -38,10 +38,19 @@ int sys_fork()
   int PID=-1;
 
   // creates the child process
-  
+
   return PID;
 }
 
 void sys_exit()
-{  
+{
+}
+
+int sys_write(int fd, char * buffer, int size) {
+  int err1 = check_fd(fd,ESCRIPTURA);
+  if(err1 != 0) return err1;
+  if(buffer == NULL) return -14; /*EFAULT*/
+  if(size < 0) return -22; /*EINVALL*/
+
+
 }
