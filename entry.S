@@ -86,7 +86,7 @@ ENTRY (system_call_handler)
       call *sys_call_table(,%eax,0x04)
       jmp fin
       err:
-      movl $-ENOSYS,%eax
+      movl $-38,%eax
       fin:
       movl %eax, 0x18(%esp)
       RESTORE_ALL

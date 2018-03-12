@@ -51,6 +51,8 @@ int sys_write(int fd, char * buffer, int size) {
   if(err1 != 0) return err1;
   if(buffer == NULL) return -14; /*EFAULT*/
   if(size < 0) return -22; /*EINVALL*/
-
-
+  if(fd == 1) {
+    int s = sys_write_console(buffer,size);
+    return s;
+  }
 }
