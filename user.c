@@ -26,25 +26,23 @@ int add(int par1,int par2){
 }
 
 void perror() {
-    char buff[];
     switch(errno) {
       case 9:
-        write(1,"EBADF : Bad file number",sizeof("EBADF : Bad file number"));
+        write(1,"\nEBADF : Bad file number",sizeof("\nEBADF : Bad file number"));
         break;
       case 13:
-        buff = "EACCES : Permission denied";
+        write(1,"\nEACCES : Permission denied",sizeof("\nEACCES : Permission denied"));
         break;
       case 38:
-        buff = "ENOSYS : Function not implemented";
+         write(1,"\nENOSYS : Function not implemented",sizeof("\nENOSYS : Function not implemented"));
         break;
       case 14:
-        buff = "EFAULT : Bad address";
+        write(1,"\nEFAULT : Bad address",sizeof("\nEFAULT : Bad address"));
         break;
       case 22:
-        buff = "EINVAL : Invalid Argument";
+        write(1,"\nEINVAL : Invalid Argument", sizeof("\nEINVAL : Invalid Argument"));
         break;
     }
-    write(1,buff,sizeof(buff));
 }
 
 int __attribute__ ((__section__(".text.main")))
@@ -58,7 +56,7 @@ main()
      acum = 0;
      acum = outer(count);
      int aux = add2(2,2);
-     if(write(1,"\nHola soc un write",-1) < 0) perror();
+     if(write(1,"\nHola soc un write",sizeof("\nHola soc un write")) < 0) perror();
      while(1);
      return aux;
 }
