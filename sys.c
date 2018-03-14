@@ -13,8 +13,13 @@
 
 #include <sched.h>
 
+#include <interrupt.h>
+
+#include <system.h>
+
 #define LECTURA 0
 #define ESCRIPTURA 1
+
 
 int check_fd(int fd, int permissions)
 {
@@ -55,4 +60,8 @@ int sys_write(int fd, char * buffer, int size) {
     int s = sys_write_console(buffer,size);
     return s;
   }
+}
+
+int sys_gettime() {
+  return zeos_ticks;
 }

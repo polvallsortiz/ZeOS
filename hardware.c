@@ -93,6 +93,7 @@ void return_gate(Word ds, Word ss, DWord esp, Word cs, DWord eip)
  *
  *   x = 0 -> enabled
  *   x = 1 -> disabled
+ *  ACTUAL = 1 1 1 1    1 1 0 0    F C
  */
 
 void enable_int(void)
@@ -103,7 +104,7 @@ __asm__ __volatile__(
   "call delay\n\t"
   "sti"
   : /*no output*/
-  : "i" (0xfd)       /* 0xFF = 11111111 -> all bits disabled */
+  : "i" (0xfc)       /* 0xFF = 11111111 -> all bits disabled */
   : "%al" );
 }
 

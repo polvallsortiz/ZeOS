@@ -14,6 +14,8 @@
 #include <zeos_mm.h> /* TO BE DELETED WHEN ADDED THE PROCESS MANAGEMENT CODE TO BECOME MULTIPROCESS */
 
 
+int zeos_ticks = 0;
+
 int (*usr_main)(void) = (void *) PH_USER_START;
 unsigned int *p_sys_size = (unsigned int *) KERNEL_START;
 unsigned int *p_usr_size = (unsigned int *) KERNEL_START+1;
@@ -60,9 +62,7 @@ inline void set_seg_regs(Word data_sel, Word stack_sel, DWord esp)
 int __attribute__((__section__(".text.main")))
   main(void)
 {
-
   set_eflags();
-
   /* Define the kernel segment registers  and a stack to execute the 'main' code */
   // It is necessary to use a global static array for the stack, because the
   // compiler will know its final memory location. Otherwise it will try to use the

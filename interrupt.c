@@ -6,11 +6,16 @@
 #include <segment.h>
 #include <hardware.h>
 #include <io.h>
+#include <libc.h>
+#include <system.h>
 
 #include <zeos_interrupt.h>
 
 Gate idt[IDT_ENTRIES];
 Register    idtR;
+
+//int zeos_ticks = 0;
+
 
 char char_map[] =
 {
@@ -31,6 +36,7 @@ char char_map[] =
 
 void keyboard_handler();
 void system_call_handler();
+void clock_handler();
 
 
 void setInterruptHandler(int vector, void (*handler)(), int maxAccessibleFromPL)
@@ -88,6 +94,7 @@ void setIdt()
 
   /* ADD INITIALIZATION CODE FOR INTERRUPT VECTOR */
   setInterruptHandler(33,keyboard_handler,0);
+  setInterruptHandler(32,clock_handler,0);
   setTrapHandler(0x80,system_call_handler,3);
   set_idt_reg(&idtR);
 }
@@ -99,4 +106,9 @@ void keyboard_routine() {
       if (aux!='\0') printc_xy(0,0,aux);
       else printc_xy(0,0,'C');
   }
+}
+
+void clock_routine() {
+    ++zeos_ticks;
+    zeos_show_clock();
 }
