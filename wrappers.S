@@ -16,4 +16,6 @@ ENTRY(write)
       movl $-1,%eax
       jmp fin
       fin:
+      movl %ebp,%esp
+      popl %ebp
       ret

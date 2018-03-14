@@ -36,7 +36,7 @@ main()
      acum = 0;
      acum = outer(count);
      int aux = add2(2,2);
-     write(1,"Hola",sizeof("Hola"));
+     write(0,"\nHola soc un write",sizeof("\nHola soc un write"));
      while(1);
      return aux;
 }
