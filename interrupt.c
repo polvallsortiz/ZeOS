@@ -99,7 +99,7 @@ void setIdt()
   set_idt_reg(&idtR);
 }
 
-void keyboard_routine() {
+void keyboard_routine() {Released in beta!
   unsigned char c = inb(0x60);
   if(c  < 0b10000000) {
       char aux = char_map[c&0b01111111];
