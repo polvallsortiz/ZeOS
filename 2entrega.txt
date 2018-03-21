@@ -1,0 +1,7 @@
+2ona ENTREGA
+Es treballa amb el fitxer sched.c
+Protected_task vector de PCBs
+NR_TASKS tantos structs como tasks
+  1 - crear freequeue
+  2 - crear ready_queue
+  3 - para crear estas colas
