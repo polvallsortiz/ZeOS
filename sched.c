@@ -6,6 +6,8 @@
 #include <mm.h>
 #include <io.h>
 
+struct task_struct *idle_task;
+
 /**
  * Container for the Task array and 2 additional pages (the first and the last one)
  * to protect against out of bound accesses.
@@ -65,15 +67,33 @@ void cpu_idle(void)
 
 void init_idle (void)
 {
-    struct list_head * first_free = list_first(&freequeue);
-    struct task_struct *first_struct = list_head_to_task_struct(first_free);
-    first_struct.PID = 0;
-    allocate_DIR(first_struct);
-
+    struct list_head *first_free = list_first(&freequeue);
+    list_del(first_free);
+    idle_task = list_entry(first_free,struct task_struct, list);
+    idle_task->PID = 0;
+    allocate_DIR(idle_task);
+    union task_union *taskun;
+    taskun = (union task_union *)idle_task;
+    taskun->stack[1023] = &cpu_idle;
+    taskun->stack[1022] = 1234;
+    idle_task->kernel_esp=taskun->stack[1022];
+    list_del(first_free);
+    printk("HOLA\n");
 }
 
 void init_task1(void)
 {
+    printk("A INIT_TASK1\n");
+    struct list_head *first_free = list_first(&freequeue);
+    list_del(first_free);
+    struct task_struct *task1 = list_entry(first_free,struct task_struct, list);
+    task1->PID = 1;
+    allocate_DIR(task1);
+    set_user_pages(task1);
+    page_table_entry * directory_task1 = get_DIR(task1);
+    set_cr3(directory_task1);
+    printk("A FINAL INIT_TASK1\n");
+
 }
 
 

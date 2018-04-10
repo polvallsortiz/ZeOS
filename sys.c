@@ -20,6 +20,7 @@
 #define LECTURA 0
 #define ESCRIPTURA 1
 
+int MAX_BUFFER_SIZE = 64;
 
 int check_fd(int fd, int permissions)
 {
@@ -57,7 +58,18 @@ int sys_write(int fd, char * buffer, int size) {
   if(buffer == NULL) return -14; /*EFAULT*/
   if(size < 0) return -22; /*EINVALL*/
   if(fd == 1) {
-    int s = sys_write_console(buffer,size);
+    int s = 0;
+    char buf_aux[64];
+    while(size > MAX_BUFFER_SIZE) {
+      if(copy_from_user(buffer,buf_aux,MAX_BUFFER_SIZE) == -1) return -14;
+      s += sys_write_console(buf_aux,MAX_BUFFER_SIZE);
+      buffer += MAX_BUFFER_SIZE;
+      size -= MAX_BUFFER_SIZE;
+    }
+    if(size != 0) {
+      if(copy_from_user(buffer,buf_aux,size) == -1) return -14;
+      s += sys_write_console(buf_aux,size);
+    }
     return s;
   }
 }
