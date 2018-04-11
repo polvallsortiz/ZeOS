@@ -21,12 +21,11 @@ struct list_head freequeue;
 
 struct list_head readyqueue;
 
-#if 0
+
 struct task_struct *list_head_to_task_struct(struct list_head *l)
 {
-  return list_entry( l, struct task_struct, list);
+  return (struct task_struct*)((int)l&0xfffff000);
 }
-#endif
 
 extern struct list_head blocked;
 
@@ -67,43 +66,41 @@ void cpu_idle(void)
 
 void init_idle (void)
 {
-    printk("INIT_IDLE \n");
+    printk("INIT_IDLE");
     struct list_head *first_free = list_first(&freequeue);
     list_del(first_free);
-    idle_task = list_entry(first_free,struct task_struct, list);
+    idle_task = list_head_to_task_struct(first_free);
     idle_task->PID = 0;
     allocate_DIR(idle_task);
     union task_union *taskun;
     taskun = (union task_union *)idle_task;
     taskun->stack[1023] = &cpu_idle;
     taskun->stack[1022] = 1234;
-    idle_task->kernel_esp=taskun->stack[1022];
+    idle_task->kernel_esp=&(taskun->stack[1022]);
     //list_del(first_free);
-    printk("INIT_IDLE FINISHED\n");
+    printk("INIT_IDLE FINISHED");
 }
 
 void init_task1(void)
 {
-    printk("A INIT_TASK1\n");
+    printk("A INIT_TASK1 ");
     struct list_head *first_free = list_first(&freequeue);
     list_del(first_free);
-    struct task_struct *task1 = list_entry(first_free,struct task_struct, list);
+    struct task_struct *task1 = list_head_to_task_struct(first_free);
     task1->PID = 1;
     allocate_DIR(task1);
     set_user_pages(task1);
-    page_table_entry * directory_task1 = get_DIR(task1);
-    setTSS();
-    set_cr3(directory_task1);
-    printk("INIT_TASK1 FINISHED\n");
-
+    tss.esp0 = &(((union task_union *)task1)->stack[1024]);
+    set_cr3(task1->dir_pages_baseAddr);
+    printk("INIT_TASK1 FINISHED");
 }
 
 
 void init_sched(){
-    printk("INIT_SCHED\n");
+    printk("INIT_SCHED");
     initialize_freequeue();
     initialize_readyqueue();
-    printk("FINISHED INIT_SCHED\n");
+    printk("FINISHED INIT_SCHED");
 }
 
 struct task_struct* current()
@@ -121,8 +118,7 @@ void initialize_freequeue() {
     INIT_LIST_HEAD(&freequeue);
     int i = 0;
     for(i = 0; i < NR_TASKS; ++i) {
-        union task_union actual = task[i];
-        list_add(&(actual.task.list), &freequeue);
+        list_add(&(task[i].task.list), &freequeue);
     }
 }
 
