@@ -67,6 +67,7 @@ void cpu_idle(void)
 
 void init_idle (void)
 {
+    printk("INIT_IDLE \n");
     struct list_head *first_free = list_first(&freequeue);
     list_del(first_free);
     idle_task = list_entry(first_free,struct task_struct, list);
@@ -77,8 +78,8 @@ void init_idle (void)
     taskun->stack[1023] = &cpu_idle;
     taskun->stack[1022] = 1234;
     idle_task->kernel_esp=taskun->stack[1022];
-    list_del(first_free);
-    printk("HOLA\n");
+    //list_del(first_free);
+    printk("INIT_IDLE FINISHED\n");
 }
 
 void init_task1(void)
@@ -91,15 +92,18 @@ void init_task1(void)
     allocate_DIR(task1);
     set_user_pages(task1);
     page_table_entry * directory_task1 = get_DIR(task1);
+    setTSS();
     set_cr3(directory_task1);
-    printk("A FINAL INIT_TASK1\n");
+    printk("INIT_TASK1 FINISHED\n");
 
 }
 
 
 void init_sched(){
+    printk("INIT_SCHED\n");
     initialize_freequeue();
     initialize_readyqueue();
+    printk("FINISHED INIT_SCHED\n");
 }
 
 struct task_struct* current()

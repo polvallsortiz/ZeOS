@@ -31,7 +31,7 @@
 00000000000i[      ]   Sound support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x7f53afd09010. after alignment, vector=0x7f53afd0a000
+00000000000i[MEM0  ] allocated memory at 0x7f3c6c87b010. after alignment, vector=0x7f3c6c87c000
 00000000000i[MEM0  ] 16,00MB
 00000000000i[MEM0  ] mem block size = 0x00020000, blocks=128
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/usr/local/share/bochs/BIOS-bochs-latest')
@@ -41,7 +41,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Tue Apr 10 17:59:18 2018 (time0=1523375958)
+00000000000i[CMOS  ] Setting initial clock to: Wed Apr 11 11:31:16 2018 (time0=1523439076)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -153,7 +153,7 @@
 00000322262i[BIOS  ] ram_end=16MB
 00000362830i[BIOS  ] Found 1 cpu(s)
 00000376414i[BIOS  ] bios_table_addr: 0x000f9cd8 end=0x000fcc00
-00000609660i[XGUI  ] charmap update. Font is 9 x 16
+00000602368i[XGUI  ] charmap update. Font is 9 x 16
 00000704209i[PCI   ] i440FX PMC write to PAM register 59 (TLB Flush)
 00001032138i[P2ISA ] PCI IRQ routing: PIRQA# set to 0x0b
 00001032157i[P2ISA ] PCI IRQ routing: PIRQB# set to 0x09
@@ -185,7 +185,7 @@
 00001528623i[BXVGA ] VBE known Display Interface b0c0
 00001528655i[BXVGA ] VBE known Display Interface b0c5
 00001531580i[VBIOS ] VBE Bios $Id: vbe.c,v 1.65 2014/07/08 18:02:25 vruppert Exp $
-00002663804i[XGUI  ] charmap update. Font is 9 x 16
+00002211852i[XGUI  ] charmap update. Font is 9 x 16
 00014040183i[BIOS  ] Booting from 0000:7c00
 00029775253i[FLOPPY] partial read() on floppy image returns 92/512
 00029819697i[FLOPPY] read() on floppy image returns 0
@@ -218,6 +218,6 @@
 00031023166i[FLOPPY] read() on floppy image returns 0
 00031067610i[FLOPPY] read() on floppy image returns 0
 00031112054i[FLOPPY] read() on floppy image returns 0
-00031250880i[GDBST ] stopped with ac0
-00031250880i[GDBST ] addr 0000000000011a09 len 1
-00031250880i[GDBST ] addr 0000000000011a00 len 40
+00031253460i[GDBST ] stopped with ac0
+00031253460i[GDBST ] addr 0000000000011a29 len 1
+00031253460i[GDBST ] addr 0000000000011a00 len 40
