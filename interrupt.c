@@ -109,6 +109,9 @@ void keyboard_routine() {
 }
 
 void clock_routine() {
+  if(zeos_ticks == 50) {
+    task_switch((union task_union *)idle_task);
+  }
     ++zeos_ticks;
     zeos_show_clock();
 }

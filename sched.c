@@ -126,3 +126,25 @@ void initialize_readyqueue() {
     INIT_LIST_HEAD(&readyqueue);
 }
 
+void task_switch(union task_union*t) {
+    printk("AQUI");
+    save_registers();
+    printk("AQUI2");
+    inner_task_switch(t);
+    recover_registers();
+}
+
+/*void inner_task_switch(union task_union*t) {
+    //pushebp();
+    printk("AQUI3");
+    set_cr3(t->task.dir_pages_baseAddr);
+    printk("AQUI4");
+    tss.esp0 = &(t->stack[1024]);
+    int *ebp = get_ebp();
+    current()->kernel_esp = ebp;
+    //popebp();
+}*/
+
+void settts(union task_union*t) {
+    tss.esp0=&(t->stack[1024]);
+}

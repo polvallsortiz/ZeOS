@@ -41,3 +41,40 @@
       movl %eax, 0x18(%esp)
       popl %ebx; popl %ecx; popl %edx; popl %esi; popl %edi; popl %ebp; popl %eax; popl %ds; popl %es; popl %fs; popl %gs
       iret
+
+.globl save_registers; .type save_registers, @function; .align 0; save_registers:
+      pushl %ebp
+      movl %esp,%ebp
+      pushl %esi
+      pushl %edi
+      pushl %ebx
+      movl %ebp,%esp
+      popl %ebp
+      ret
+
+.globl recover_registers; .type recover_registers, @function; .align 0; recover_registers:
+      pushl %ebp
+      movl %esp,%ebp
+      popl %ebx
+      popl %edi
+      popl %esi
+      movl %ebp,%esp
+      popl %ebp
+      ret
+
+.globl inner_task_switch; .type inner_task_switch, @function; .align 0; inner_task_switch:
+      pushl %ebp
+      movl %esp,%ebp
+      movl 8(%ebp),%esi
+      and $0xfffff000,%esi
+      movl %ebp,%cr3
+      movl 8(%ebp),%ecx
+      pushl %ecx
+      call puttts
+      popl %ecx
+      call current
+      movl 8(%eax),%ebp
+      movl 8(%esi),%esp
+      movl %ebp,%esp
+      popl %ebp
+      ret

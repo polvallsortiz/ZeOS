@@ -98,3 +98,40 @@ ENTRY (system_call_handler)
       movl %eax, 0x18(%esp)
       RESTORE_ALL
       iret
+
+ENTRY (save_registers)
+      pushl %ebp
+      movl %esp,%ebp
+      pushl %esi
+      pushl %edi
+      pushl %ebx
+      movl %ebp,%esp
+      popl %ebp
+      ret
+
+ENTRY (recover_registers)
+      pushl %ebp
+      movl %esp,%ebp
+      popl %ebx
+      popl %edi
+      popl %esi
+      movl %ebp,%esp
+      popl %ebp
+      ret
+
+ENTRY (inner_task_switch)
+      pushl %ebp
+      movl %esp,%ebp
+      movl 8(%ebp),%esi         //t to ebx
+      and $0xfffff000,%esi      //and to get to the task_struct
+      movl 4(%esi),%cr3         //cr3 = new->dir
+      movl 8(%ebp),%ecx         //ecx = taskunion
+      pushl %ecx                //parameter for tss
+      call puttts               //tss esp0=&((task_union*)t)->stack[1024]
+      popl %ecx
+      call current              //eax = current task struct
+      movl 8(%eax),%ebp         //current()->kernel_esp=ebp
+      movl 8(%esi),%esp
+      movl %ebp,%esp
+      popl %ebp
+      ret
