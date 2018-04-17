@@ -127,24 +127,16 @@ void initialize_readyqueue() {
 }
 
 void task_switch(union task_union*t) {
-    printk("AQUI");
-    save_registers();
-    printk("AQUI2");
+    //save_registers();
     inner_task_switch(t);
-    recover_registers();
+    //recover_registers();
 }
 
-/*void inner_task_switch(union task_union*t) {
+void inner_task_switch(union task_union*t) {
     //pushebp();
-    printk("AQUI3");
     set_cr3(t->task.dir_pages_baseAddr);
-    printk("AQUI4");
     tss.esp0 = &(t->stack[1024]);
-    int *ebp = get_ebp();
-    current()->kernel_esp = ebp;
-    //popebp();
-}*/
-
-void settts(union task_union*t) {
-    tss.esp0=&(t->stack[1024]);
+    int *esp = current()->kernel_esp;
+    int *t_esp = t->task.kernel_esp;
+    finalize_task_switch(esp,t_esp);
 }

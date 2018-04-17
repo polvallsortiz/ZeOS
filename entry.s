@@ -62,19 +62,10 @@
       popl %ebp
       ret
 
-.globl inner_task_switch; .type inner_task_switch, @function; .align 0; inner_task_switch:
-      pushl %ebp
-      movl %esp,%ebp
-      movl 8(%ebp),%esi
-      and $0xfffff000,%esi
-      movl %ebp,%cr3
+.globl finalize_task_switch; .type finalize_task_switch, @function; .align 0; finalize_task_switch:
       movl 8(%ebp),%ecx
-      pushl %ecx
-      call puttts
-      popl %ecx
-      call current
-      movl 8(%eax),%ebp
-      movl 8(%esi),%esp
-      movl %ebp,%esp
+      movl 12(%ebp),%edx
+      movl %ebp,(%ecx)
+      movl %edx,%esp
       popl %ebp
       ret

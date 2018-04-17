@@ -119,19 +119,10 @@ ENTRY (recover_registers)
       popl %ebp
       ret
 
-ENTRY (inner_task_switch)
-      pushl %ebp
-      movl %esp,%ebp
-      movl 8(%ebp),%esi         //t to ebx
-      and $0xfffff000,%esi      //and to get to the task_struct
-      movl 4(%esi),%cr3         //cr3 = new->dir
-      movl 8(%ebp),%ecx         //ecx = taskunion
-      pushl %ecx                //parameter for tss
-      call puttts               //tss esp0=&((task_union*)t)->stack[1024]
-      popl %ecx
-      call current              //eax = current task struct
-      movl 8(%eax),%ebp         //current()->kernel_esp=ebp
-      movl 8(%esi),%esp
-      movl %ebp,%esp
+ENTRY (finalize_task_switch)
+      movl 8(%ebp),%ecx
+      movl 12(%ebp),%edx
+      movl %ebp,(%ecx)
+      movl %edx,%esp
       popl %ebp
       ret
