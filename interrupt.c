@@ -8,6 +8,7 @@
 #include <io.h>
 #include <libc.h>
 #include <system.h>
+#include <libc.h> //TO TEST GETPID
 
 #include <zeos_interrupt.h>
 
@@ -109,7 +110,7 @@ void keyboard_routine() {
 }
 
 void clock_routine() {
-  if(zeos_ticks == 50) {
+  if(zeos_ticks == 5000) {
     task_switch((union task_union *)idle_task);
   }
     ++zeos_ticks;

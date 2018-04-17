@@ -1,4 +1,6 @@
 #include <libc.h>
+#include <io.h>
+#include <utils.h>
 
 char buff[24];
 
@@ -56,7 +58,11 @@ main()
      acum = 0;
      acum = outer(count);
      int aux = add2(2,2);
-     if(write(1,"\nHola soc un write",sizeof("\nHola soc un write")) < 0) perror();
+     write(1,"\n PID : ", sizeof("\n PID : "));
+     int a = getpid();
+     char num[100];
+     itoa(a,num);
+     if(write(1,num,strlen(num)) < 0) perror();
      while(1);
      return aux;
 }

@@ -119,13 +119,6 @@ ENTRY (task_switch)
       ret;
 
 
-ENTRY (recover_registers)
-      popl %ebx;
-      popl %edi;
-      popl %esp;
-      popl %ebp;
-      ret;
-
 ENTRY (finalize_task_switch)
       movl %esp,%ecx
       andl $0xfffff000,%ecx

@@ -142,11 +142,10 @@ void task_switch(union task_union*t) {
     finalize_task_switch(esp,t_esp);
 }*/
 
-/* Do the magic of a task switch */
-void inner_task_switch(union task_union *new)
+void inner_task_switch(union task_union *t)
 {
-    page_table_entry *dir = get_DIR(&new->task);
-    tss.esp0=&(new->stack[1024]);
+    page_table_entry *dir = get_DIR(&t->task);
+    tss.esp0=&(t->stack[1024]);
     set_cr3(dir);
     finalize_task_switch();
 }

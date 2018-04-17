@@ -62,13 +62,6 @@
       ret;
 
 
-.globl recover_registers; .type recover_registers, @function; .align 0; recover_registers:
-      popl %ebx;
-      popl %edi;
-      popl %esp;
-      popl %ebp;
-      ret;
-
 .globl finalize_task_switch; .type finalize_task_switch, @function; .align 0; finalize_task_switch:
       movl %esp,%ecx
       andl $0xfffff000,%ecx

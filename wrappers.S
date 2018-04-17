@@ -28,3 +28,11 @@ ENTRY(gettime)
       movl $10, %eax
       int $0x80
       ret
+
+ENTRY(getpid)
+      pushl %ebp
+      movl %esp,%ebp
+      movl $20,%eax
+      int $0x80
+      popl %ebp
+      ret
