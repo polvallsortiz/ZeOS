@@ -8,6 +8,7 @@
 #include <hardware.h>
 #include <sched.h>
 
+
 Byte phys_mem[TOTAL_PAGES];
 
 /* SEGMENTATION */

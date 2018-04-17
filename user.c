@@ -60,9 +60,14 @@ main()
      int aux = add2(2,2);
      write(1,"\n PID : ", sizeof("\n PID : "));
      int a = getpid();
-     char num[100];
+     char num[10];
      itoa(a,num);
      if(write(1,num,strlen(num)) < 0) perror();
+     int pid = fork();
+     write(1,"\n PID after fork : ", sizeof("\n PID after fork : "));
+     char num2[10];
+     itoa(pid,num2);
+     write(1,num2,strlen(num2));
      while(1);
      return aux;
 }

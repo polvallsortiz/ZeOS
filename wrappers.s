@@ -43,3 +43,11 @@
       int $0x80
       popl %ebp
       ret
+
+.globl fork; .type fork, @function; .align 0; fork:
+      pushl %ebp
+      movl %esp,%ebp
+      movl $2,%eax
+      int $0x80
+      popl %ebp
+      ret

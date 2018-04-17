@@ -36,3 +36,11 @@ ENTRY(getpid)
       int $0x80
       popl %ebp
       ret
+
+ENTRY(fork)
+      pushl %ebp
+      movl %esp,%ebp
+      movl $2,%eax
+      int $0x80
+      popl %ebp
+      ret

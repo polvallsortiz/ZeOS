@@ -8,6 +8,9 @@
 
 struct task_struct *idle_task;
 
+int actual_pid = 0;
+
+
 /**
  * Container for the Task array and 2 additional pages (the first and the last one)
  * to protect against out of bound accesses.
@@ -71,6 +74,7 @@ void init_idle (void)
     list_del(first_free);
     idle_task = list_head_to_task_struct(first_free);
     idle_task->PID = 0;
+    ++actual_pid;
     allocate_DIR(idle_task);
     union task_union *taskun;
     taskun = (union task_union *)idle_task;
@@ -88,6 +92,7 @@ void init_task1(void)
     list_del(first_free);
     struct task_struct *task1 = list_head_to_task_struct(first_free);
     task1->PID = 1;
+    ++actual_pid;
     allocate_DIR(task1);
     set_user_pages(task1);
     tss.esp0 = &(((union task_union *)task1)->stack[1024]);

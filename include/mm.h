@@ -12,6 +12,8 @@
  
 #define FREE_FRAME 0
 #define USED_FRAME 1
+
+
 /* Bytemap to mark the free physical pages */
 extern Byte phys_mem[TOTAL_PAGES];
 
