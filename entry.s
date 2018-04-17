@@ -42,30 +42,38 @@
       popl %ebx; popl %ecx; popl %edx; popl %esi; popl %edi; popl %ebp; popl %eax; popl %ds; popl %es; popl %fs; popl %gs
       iret
 
-.globl save_registers; .type save_registers, @function; .align 0; save_registers:
+.globl task_switch; .type task_switch, @function; .align 0; task_switch:
       pushl %ebp
       movl %esp,%ebp
-      pushl %esi
-      pushl %edi
-      pushl %ebx
-      movl %ebp,%esp
-      popl %ebp
-      ret
+      pushl %esi;
+      pushl %edi;
+      pushl %ebx;
 
-.globl recover_registers; .type recover_registers, @function; .align 0; recover_registers:
-      pushl %ebp
-      movl %esp,%ebp
+      movl 8(%ebp),%ecx
+      pushl %ecx
+
+      call inner_task_switch
+
+      popl %ecx
       popl %ebx
       popl %edi
-      popl %esi
-      movl %ebp,%esp
-      popl %ebp
-      ret
+      popl %esp
+      popl %ebp;
+      ret;
+
+
+.globl recover_registers; .type recover_registers, @function; .align 0; recover_registers:
+      popl %ebx;
+      popl %edi;
+      popl %esp;
+      popl %ebp;
+      ret;
 
 .globl finalize_task_switch; .type finalize_task_switch, @function; .align 0; finalize_task_switch:
-      movl 8(%ebp),%ecx
-      movl 12(%ebp),%edx
-      movl %ebp,(%ecx)
-      movl %edx,%esp
+      movl %esp,%ecx
+      andl $0xfffff000,%ecx
+      movl %ebp,8(%ecx)
+      movl 8(%ebp),%edx
+      movl 8(%edx),%esp
       popl %ebp
       ret

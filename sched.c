@@ -125,18 +125,28 @@ void initialize_freequeue() {
 void initialize_readyqueue() {
     INIT_LIST_HEAD(&readyqueue);
 }
-
+/*
 void task_switch(union task_union*t) {
-    //save_registers();
+    save_registers();
     inner_task_switch(t);
-    //recover_registers();
+    recover_registers();
 }
-
-void inner_task_switch(union task_union*t) {
+*/
+/*void inner_task_switch(union task_union*t) {
     //pushebp();
     set_cr3(t->task.dir_pages_baseAddr);
     tss.esp0 = &(t->stack[1024]);
+    save_registers();
     int *esp = current()->kernel_esp;
     int *t_esp = t->task.kernel_esp;
     finalize_task_switch(esp,t_esp);
+}*/
+
+/* Do the magic of a task switch */
+void inner_task_switch(union task_union *new)
+{
+    page_table_entry *dir = get_DIR(&new->task);
+    tss.esp0=&(new->stack[1024]);
+    set_cr3(dir);
+    finalize_task_switch();
 }
