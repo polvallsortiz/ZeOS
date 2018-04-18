@@ -110,9 +110,7 @@ void keyboard_routine() {
 }
 
 void clock_routine() {
-  if(zeos_ticks == 5000) {
-    task_switch((union task_union *)idle_task);
-  }
+    schedule();
     ++zeos_ticks;
     zeos_show_clock();
 }

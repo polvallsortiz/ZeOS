@@ -80,6 +80,7 @@ int sys_fork()
     }
 
     //Usamos paginas libres del padre de forma temporal
+    //recorremos la tabla de paginas buscando una entry libre recorriendo Kernel, Codigo y Datos
     int free_entry = -1;
     for(int auxpag = PAG_LOG_INIT_DATA+NUM_PAG_DATA; auxpag < TOTAL_PAGES; auxpag++){
       if(!parent[auxpag].entry){
@@ -100,7 +101,7 @@ int sys_fork()
     }
     //ts.PID=new_pid();
     ts->PID=get_new_pid();
-
+    set_quantum(ts,get_quantum(current()));
 
     union task_union *taskun;
     taskun = (union task_union *)ts;
@@ -110,9 +111,10 @@ int sys_fork()
     /*&((union task_union *)ts)->stack[1024-19] = 1234
       &((union task_union *)ts)->stack[1024-18] = &ret_from_fork*/
 
-    taskun->stack[1024-19] = 1234;  //feka
+    taskun->stack[1024-19] = 1234;  //-19 porque por debajo tenemos &ret_from_fork,@handler,CTX.SFTW,CTX.HDW
     taskun->stack[1024-18] = &ret_from_fork;
     list_add(&(ts->list),&readyqueue);
+    ts->estat = ST_READY;
     return ts->PID;
   }
 }

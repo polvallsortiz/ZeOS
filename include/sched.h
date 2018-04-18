@@ -18,6 +18,8 @@ struct task_struct {
   int PID;			/* Process ID. This MUST be the first field of the struct. */
   page_table_entry * dir_pages_baseAddr;
   int kernel_esp;
+  int quantum;
+  enum state_t estat;
   struct list_head list;
 };
 
@@ -34,6 +36,7 @@ extern struct list_head freequeue;
 
 extern struct list_head readyqueue;
 extern int actual_pid;
+extern int actual_ticks;
 
 
 
@@ -67,5 +70,12 @@ int needs_sched_rr();
 void update_sched_data_rr();
 void initialize_freequeue();
 void initialize_readyqueue();
+
+//QUANTUM Functions
+int get_quantum(struct task_struct *t);
+void set_quantum(struct task_struct *t, int new_quantum);
+
+//SCHEDULE function
+void schedule();
 
 #endif  /* __SCHED_H__ */

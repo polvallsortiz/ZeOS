@@ -1,6 +1,7 @@
 #include <libc.h>
 #include <io.h>
 #include <utils.h>
+#include <sched.h>
 
 char buff[24];
 
@@ -64,10 +65,16 @@ main()
      itoa(a,num);
      if(write(1,num,strlen(num)) < 0) perror();
      int pid = fork();
-     write(1,"\n PID after fork : ", sizeof("\n PID after fork : "));
+     write(1, " PID : ", sizeof("\n PID : "));
      char num2[10];
-     itoa(pid,num2);
-     write(1,num2,strlen(num2));
+     itoa(pid, num2);
+     if (write(1, num2, strlen(num2)) < 0) perror();
+     int pid2 = fork();
+     write(1, " PID : ", sizeof("\n PID : "));
+     char num3[10];
+     itoa(pid2, num3);
+     if (write(1, num3, strlen(num3)) < 0) perror();
+
      while(1);
      return aux;
 }

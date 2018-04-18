@@ -9,6 +9,7 @@
 struct task_struct *idle_task;
 
 int actual_pid = 0;
+int actual_ticks = 0;
 
 
 /**
@@ -92,6 +93,7 @@ void init_task1(void)
     list_del(first_free);
     struct task_struct *task1 = list_head_to_task_struct(first_free);
     task1->PID = 1;
+    set_quantum(task1,100);
     ++actual_pid;
     allocate_DIR(task1);
     set_user_pages(task1);
@@ -152,5 +154,50 @@ void inner_task_switch(union task_union *t)
     page_table_entry *dir = get_DIR(&t->task);
     tss.esp0=&(t->stack[1024]);
     set_cr3(dir);
+    actual_ticks = get_quantum(t);
     finalize_task_switch();
+}
+
+void update_sched_data_rr() {
+    --actual_ticks;
+}
+
+int needs_sched_rr(void) {
+    return (actual_ticks == 0);
+}
+
+void update_process_state_rr(struct task_struct * t, struct list_head *dest) {
+    if(t->estat != ST_RUN) list_del(&t->list);
+    if(dest != NULL) {
+        list_add_tail(&t->list, dest);
+        if(dest == &readyqueue) t->estat = ST_READY;
+    }
+    else t->estat = ST_RUN;
+}
+
+void sched_next_rr(void) {
+    if(!list_empty(&freequeue)) {
+        struct list_head *first_free = list_first(&freequeue);
+        struct task_struct * ts = list_head_to_task_struct(first_free);
+        union task_union * taskun = (union task_union *)ts;
+        task_switch(taskun);
+    }
+    else if(current() != idle_task) task_switch((union task_union *)idle_task);
+}
+
+int get_quantum(struct task_struct *t) {
+    return t->quantum;
+}
+
+void set_quantum(struct task_struct *t, int new_quantum) {
+    t->quantum = new_quantum;
+}
+
+void schedule() {
+    update_sched_data_rr();
+    int aux = needs_sched_rr();
+    if(aux == 1) {
+        update_process_state_rr(current(),&readyqueue);
+        sched_next_rr();
+    }
 }

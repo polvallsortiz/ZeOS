@@ -210,7 +210,7 @@ int init_frames( void )
     return 0;
 }
 
-/* alloc_frame - Search a free physical page (== frame) and mark it as USED_FRAME. 
+/* alloc_frame -and mark it Search a free physical page (== frame)  as USED_FRAME.
  * Returns the frame number or -1 if there isn't any frame available. */
 int alloc_frame( void )
 {
