@@ -59,7 +59,8 @@ int sys_fork()
     struct list_head *first_free = list_first(&freequeue);
     list_del(first_free);
     struct task_struct *ts = list_head_to_task_struct(first_free);
-    copy_data((union task_union *)current(),(union task_union *)ts, sizeof(union task_union));
+    union task_union *taskun = (union task_union *)ts;
+    copy_data(current(),taskun, sizeof(union task_union));
     allocate_DIR(ts);
 
     int frames[NUM_PAG_DATA];
@@ -67,6 +68,7 @@ int sys_fork()
       frames[frame] = alloc_frame();
       if(frames[frame] < 0) { //SINO POSIBLE ROLLBACK
         for(int free = 0; free < frame; ++free) free_frame(frames[free]);
+        list_add_tail(first_free,&freequeue);
         return -1;
       }
     }
@@ -74,53 +76,82 @@ int sys_fork()
     page_table_entry *parent = get_PT(current());
     page_table_entry *child = get_PT(ts);
 
-    int totalpages = NUM_PAG_KERNEL + NUM_PAG_CODE;
-    for(int page = 0; page < totalpages; page++) {
+    for(int page = 0; page < NUM_PAG_DATA; page++) {
+        set_ss_pag(child, PAG_LOG_INIT_DATA+page, frames[page]);
+    }
+
+    for(int page = 0; page < NUM_PAG_KERNEL; page++) {
       set_ss_pag(child, page, get_frame(parent, page));
+    }
+
+    for(int page = 0; page < NUM_PAG_CODE; page++) {
+      set_ss_pag(child,PAG_LOG_INIT_CODE+page,get_frame(parent,PAG_LOG_INIT_CODE+page));
     }
 
     //Usamos paginas libres del padre de forma temporal
     //recorremos la tabla de paginas buscando una entry libre recorriendo Kernel, Codigo y Datos
-    int free_entry = -1;
+    /*int free_entry = -1;
     for(int auxpag = PAG_LOG_INIT_DATA+NUM_PAG_DATA; auxpag < TOTAL_PAGES; auxpag++){
       if(!parent[auxpag].entry){
         free_entry = auxpag;
         break;
       }
     }
-    if(free_entry == -1) return -1; //SINO HAY DEVOLVEMOS ERROR -1
-    for(int it=0;it<NUM_PAG_DATA;it++){
-      set_ss_pag(child,it+PAG_LOG_INIT_DATA,frames[it]);  //Al hijo les asignamos permanentemente
-      set_ss_pag(parent,free_entry,frames[it]);   //Apuntamos de forma temporal a las del hijo
+    if(free_entry == -1) return -1; //SINO HAY DEVOLVEMOS ERROR -1*/
+    for(int it=NUM_PAG_KERNEL+NUM_PAG_CODE;it<NUM_PAG_KERNEL+NUM_PAG_CODE+NUM_PAG_DATA;it++){
+      set_ss_pag(parent,it+NUM_PAG_DATA,get_frame(child,it));   //Apuntamos de forma temporal a las del hijo
 
-      copy_data((void *)((PAG_LOG_INIT_DATA+it)*PAGE_SIZE),(void *)(free_entry*PAGE_SIZE), PAGE_SIZE); //Copiamos ya que tenemos al padre apuntando a las definitivas del hijo
+      copy_data((void *)(it<<12),(void *)((it+NUM_PAG_DATA)<<12), PAGE_SIZE); //Copiamos ya que tenemos al padre apuntando a las definitivas del hijo
 
-      del_ss_pag(parent,free_entry);  //Eliminamos el frame del padre hacia el hijo, para proteger su data
-
-      set_cr3(current()->dir_pages_baseAddr); //Flush de la TLB
+      del_ss_pag(parent,it+NUM_PAG_DATA);  //Eliminamos el frame del padre hacia el hijo, para proteger su data
     }
+
+    set_cr3(current()->dir_pages_baseAddr); //Flush de la TLB
     //ts.PID=new_pid();
     ts->PID=get_new_pid();
     set_quantum(ts,get_quantum(current()));
 
-    union task_union *taskun;
-    taskun = (union task_union *)ts;
 
     ts->kernel_esp = taskun->stack[1024-19];  //Actualizamos el esp en su task_struct
 
     /*&((union task_union *)ts)->stack[1024-19] = 1234
       &((union task_union *)ts)->stack[1024-18] = &ret_from_fork*/
 
-    taskun->stack[1024-19] = 1234;  //-19 porque por debajo tenemos &ret_from_fork,@handler,CTX.SFTW,CTX.HDW
-    taskun->stack[1024-18] = &ret_from_fork;
-    list_add(&(ts->list),&readyqueue);
+    int reg_ebp = (int) get_ebp();
+    reg_ebp = reg_ebp - (int)current() + (int)taskun;
+    taskun->task.kernel_esp = reg_ebp + sizeof(DWord);
+
+    DWord temp_ebp = *(DWord*)reg_ebp;
+    taskun->task.kernel_esp-=sizeof(DWord);
+    *(DWord*)(taskun->task.kernel_esp)=(DWord)&ret_from_fork;
+    taskun->task.kernel_esp-= sizeof(DWord);
+    *(DWord*)(taskun->task.kernel_esp)=temp_ebp;
+
+    /*taskun->stack[1024-19] = 1234;  //-19 porque por debajo tenemos &ret_from_fork,@handler,CTX.SFTW,CTX.HDW
+    taskun->stack[1024-18] = &ret_from_fork;*/
+    list_add_tail(&(ts->list),&readyqueue);
     ts->estat = ST_READY;
     return ts->PID;
   }
 }
 
+
+
+
+
+
+
 void sys_exit()
 {
+    page_table_entry* actual = get_PT(current());
+    for(int frame = 0; frame < NUM_PAG_DATA; frame++) {
+      free_frame(get_frame(actual,PAG_LOG_INIT_DATA+frame));
+      del_ss_pag(actual,PAG_LOG_INIT_DATA+frame);
+    }
+    current()->PID = -1;
+    list_add_tail(&(current()->list),&freequeue);
+    //update_process_state_rr(current(),&freequeue);
+    sched_next_rr();
 }
 
 int sys_write(int fd, char * buffer, int size) {

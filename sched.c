@@ -94,6 +94,8 @@ void init_task1(void)
     struct task_struct *task1 = list_head_to_task_struct(first_free);
     task1->PID = 1;
     set_quantum(task1,100);
+    actual_ticks = 100;
+    task1->estat = ST_RUN;
     ++actual_pid;
     allocate_DIR(task1);
     set_user_pages(task1);
@@ -155,7 +157,7 @@ void inner_task_switch(union task_union *t)
     tss.esp0=&(t->stack[1024]);
     set_cr3(dir);
     actual_ticks = get_quantum(t);
-    finalize_task_switch();
+    finalize_task_switch(&current()->kernel_esp,t->task.kernel_esp);
 }
 
 void update_sched_data_rr() {
@@ -171,18 +173,29 @@ void update_process_state_rr(struct task_struct * t, struct list_head *dest) {
     if(dest != NULL) {
         list_add_tail(&t->list, dest);
         if(dest == &readyqueue) t->estat = ST_READY;
+        //if(dest == &freequeue) t->estat = ST_BLOCKED;
     }
     else t->estat = ST_RUN;
 }
 
 void sched_next_rr(void) {
-    if(!list_empty(&freequeue)) {
-        struct list_head *first_free = list_first(&freequeue);
-        struct task_struct * ts = list_head_to_task_struct(first_free);
-        union task_union * taskun = (union task_union *)ts;
+    struct list_head *first_free;
+    struct task_struct * ts;
+    union task_union * taskun;
+    if(!list_empty(&readyqueue)) {
+        first_free = list_first(&readyqueue);
+        list_del(first_free);
+        ts = list_head_to_task_struct(first_free);
+        taskun = (union task_union *)ts;
+        actual_ticks = get_quantum(ts);
+        ts->estat = ST_RUN;
         task_switch(taskun);
     }
-    else if(current() != idle_task) task_switch((union task_union *)idle_task);
+    else if(current() != idle_task) {
+        actual_ticks = get_quantum(idle_task);
+        idle_task->estat = ST_RUN;
+        task_switch((union task_union *)idle_task);
+    }
 }
 
 int get_quantum(struct task_struct *t) {
@@ -195,8 +208,7 @@ void set_quantum(struct task_struct *t, int new_quantum) {
 
 void schedule() {
     update_sched_data_rr();
-    int aux = needs_sched_rr();
-    if(aux == 1) {
+    if(needs_sched_rr()) {
         update_process_state_rr(current(),&readyqueue);
         sched_next_rr();
     }

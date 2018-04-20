@@ -44,3 +44,11 @@ ENTRY(fork)
       int $0x80
       popl %ebp
       ret
+
+ENTRY(exit)
+      pushl %ebp
+      movl %esp,%ebp
+      movl $1,%eax
+      int $0x80
+      popl %ebp
+      ret

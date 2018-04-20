@@ -114,16 +114,18 @@ ENTRY (task_switch)
       popl %ecx
       popl %ebx
       popl %edi
-      popl %esp
+      popl %esi
       popl %ebp;
       ret;
 
 
 ENTRY (finalize_task_switch)
-      movl %esp,%ecx
-      andl $0xfffff000,%ecx
-      movl %ebp,8(%ecx)
-      movl 8(%ebp),%edx
-      movl 8(%edx),%esp
+      movl 4(%esp),%ecx
+      movl %ebp,(%ecx)
+      movl 8(%esp),%esp
       popl %ebp
+      ret
+
+ENTRY (get_ebp)
+      movl %ebp,%eax
       ret
