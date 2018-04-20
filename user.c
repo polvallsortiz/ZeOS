@@ -59,16 +59,7 @@ main()
      acum = 0;
      acum = outer(count);
      int aux = add2(2,2);
-     write(1,"\n PID : ", sizeof("\n PID : "));
-     int a = getpid();
-     char num[10];
-     itoa(a,num);
-     if(write(1,num,strlen(num)) < 0) perror();
      int pid = fork();
-     write(1, " PID : ", sizeof("\n PID : "));
-     char num2[10];
-     itoa(pid, num2);
-     if (write(1, num2, strlen(num2)) < 0) perror();
      if(pid != 0) {
          exit();
      }
@@ -78,8 +69,15 @@ main()
          itoa(pid2, num3);
          write(1, "\n SOC EL FILL I NOMES QUEDO JO AMB PID: ", sizeof("\n SOC EL FILL I NOMES QUEDO JO AMB PID: "));
          write(1, num3, strlen(num3));
-         exit();
      }
+     struct stats s;
+     get_stats(3,&s);
+     int stat = (int)s.elapsed_total_ticks;
+     char num4[10];
+     itoa(stat,num4);
+     write(1, "\n STAT DE ELAPSED TOTAL TICKS : ", sizeof("\n STAT DE ELAPSED TOTAL TICKS : "));
+     write(1,num4,strlen(num4));
+     exit();
      while(1);
      return aux;
 }

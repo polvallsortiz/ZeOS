@@ -72,20 +72,35 @@
 
 ENTRY (keyboard_handler)
       SAVE_ALL
+      movl %eax,%ebx
+      CALL user_system
+      movl %ebx,%eax
       EOI
       CALL keyboard_routine
+      movl %eax,%ebx
+      CALL system_user
+      movl %ebx,%eax
       RESTORE_ALL
       iret
 
 ENTRY (clock_handler)
       SAVE_ALL
+      movl %eax,%ebx
+      CALL user_system
+      movl %ebx,%eax
       EOI
       CALL clock_routine
+      movl %eax,%ebx
+      CALL system_user
+      movl %ebx,%eax
       RESTORE_ALL
       iret
 
 ENTRY (system_call_handler)
       SAVE_ALL
+      movl %eax,%ebx
+      CALL user_system
+      movl %ebx,%eax
       cmpl $0, %eax
       jl err
       cmpl $MAX_SYSCALL, %eax
@@ -96,6 +111,9 @@ ENTRY (system_call_handler)
       movl $-38,%eax
       fin:
       movl %eax, 0x18(%esp)
+      movl %eax,%ebx
+      CALL system_user
+      movl %ebx,%eax
       RESTORE_ALL
       iret
 

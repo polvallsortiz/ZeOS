@@ -49,6 +49,31 @@ int get_new_pid() {
   return actual_pid;
 }
 
+void update_proc_stats(unsigned long* stat, unsigned long* elapsed) {
+  *stat += get_ticks() - *elapsed;
+  *elapsed = get_ticks();
+}
+
+void user_system() {
+  update_proc_stats(&(current()->proc_stats.user_ticks),&(current()->proc_stats.elapsed_total_ticks));
+}
+
+void system_user() {
+  update_proc_stats(&(current()->proc_stats.system_ticks),&(current()->proc_stats.elapsed_total_ticks));
+}
+
+int sys_get_stats(int pid, struct stats* stat) {
+  if(pid < 0) return -1;
+  for(int tasks = 0; tasks < NR_TASKS; tasks++) {
+    if(tasks[task].task.PID == pid) {
+      task[tasks].task.proc_stats.remaining_ticks = actual_ticks;
+      copy_to_user(&(task[tasks].task.proc_stats),stat,sizeof(struct stats));
+      return 0;
+    }
+  }
+  return -1;
+}
+
 
 int sys_fork()
 {
@@ -131,6 +156,7 @@ int sys_fork()
     taskun->stack[1024-18] = &ret_from_fork;*/
     list_add_tail(&(ts->list),&readyqueue);
     ts->estat = ST_READY;
+    init_stats(&ts->proc_stats);
     return ts->PID;
   }
 }

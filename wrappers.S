@@ -52,3 +52,15 @@ ENTRY(exit)
       int $0x80
       popl %ebp
       ret
+
+ENTRY(get_stats)
+     pushl %ebp
+     movl %esp,%ebp
+     pushl %ebx
+     movl $35,%eax
+     movl 8(%ebp),%ebx
+     movl 12(%ebp),%ecx
+     int $0x80
+     popl %ebx
+     popl %ebp
+     ret

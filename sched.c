@@ -75,6 +75,7 @@ void init_idle (void)
     list_del(first_free);
     idle_task = list_head_to_task_struct(first_free);
     idle_task->PID = 0;
+    init_stats(&idle_task->proc_stats);
     ++actual_pid;
     allocate_DIR(idle_task);
     union task_union *taskun;
@@ -96,6 +97,7 @@ void init_task1(void)
     set_quantum(task1,100);
     actual_ticks = 100;
     task1->estat = ST_RUN;
+    init_stats(&task1->proc_stats);
     ++actual_pid;
     allocate_DIR(task1);
     set_user_pages(task1);
@@ -110,6 +112,16 @@ void init_sched(){
     initialize_freequeue();
     initialize_readyqueue();
     printk("FINISHED INIT_SCHED");
+}
+
+void init_stats(struct stats *status) {
+    status->user_ticks = 0;
+    status->system_ticks = 0;
+    status->blocked_ticks = 0;
+    status->ready_ticks = 0;
+    status->elapsed_total_ticks = get_ticks();
+    status->total_trans = 0; /* Number of times the process has got the CPU: READY->RUN transitions */
+    status->remaining_ticks = get_ticks();
 }
 
 struct task_struct* current()
@@ -134,6 +146,7 @@ void initialize_freequeue() {
 void initialize_readyqueue() {
     INIT_LIST_HEAD(&readyqueue);
 }
+
 /*
 void task_switch(union task_union*t) {
     save_registers();
@@ -172,7 +185,13 @@ void update_process_state_rr(struct task_struct * t, struct list_head *dest) {
     if(t->estat != ST_RUN) list_del(&t->list);
     if(dest != NULL) {
         list_add_tail(&t->list, dest);
-        if(dest == &readyqueue) t->estat = ST_READY;
+        if(dest == &readyqueue) {
+            t->estat = ST_READY;
+            /*STAT PROCS
+            current()->proc_stats->system_ticks += get_ticks() - current()->proc_stats->elapsed_total_ticks;
+            current()->proc_stats->elapsed_total_ticks = get_ticks;*/
+            update_proc_stats(&(t->proc_stats.system_ticks),&(t->proc_stats.elapsed_total_ticks));
+        }
         //if(dest == &freequeue) t->estat = ST_BLOCKED;
     }
     else t->estat = ST_RUN;
@@ -189,11 +208,29 @@ void sched_next_rr(void) {
         taskun = (union task_union *)ts;
         actual_ticks = get_quantum(ts);
         ts->estat = ST_RUN;
+        /*STAT PROCS
+        current()->proc_stats->system_ticks += get_ticks() - current()->proc_stats->elapsed_total_ticks;
+        current()->proc_stats->elapsed_total_ticks = get_ticks;*/
+        update_proc_stats(&(current()->proc_stats.system_ticks),&(current()->proc_stats.elapsed_total_ticks));
+        /*STAT PROCS
+        ts->proc_stats->ready_ticks += get_ticks() - ts->proc_stats->elapsed_total_ticks;
+        ts->proc_stats->elapsed_total_ticks = get_ticks;*/
+        update_proc_stats(&(ts->proc_stats.ready_ticks),&(ts->proc_stats.elapsed_total_ticks));
+        ts->proc_stats.total_trans++;
         task_switch(taskun);
     }
     else if(current() != idle_task) {
         actual_ticks = get_quantum(idle_task);
         idle_task->estat = ST_RUN;
+        /*STAT PROCS
+        current()->proc_stats->system_ticks += get_ticks() - current()->proc_stats->elapsed_total_ticks;
+        current()->proc_stats->elapsed_total_ticks = get_ticks;*/
+        update_proc_stats(&(current()->proc_stats.system_ticks),&(current()->proc_stats.elapsed_total_ticks));
+        /*STAT PROCS
+        ts->proc_stats->ready_ticks += get_ticks() - current()->proc_stats->elapsed_total_ticks;
+        ts->proc_stats->elapsed_total_ticks = get_ticks;*/
+        update_proc_stats(&(ts->proc_stats.ready_ticks),&(ts->proc_stats.elapsed_total_ticks));
+        ts->proc_stats.total_trans++;
         task_switch((union task_union *)idle_task);
     }
 }

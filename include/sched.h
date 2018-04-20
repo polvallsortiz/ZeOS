@@ -8,6 +8,7 @@
 #include <list.h>
 #include <types.h>
 #include <mm_address.h>
+#include <stats.h>
 
 #define NR_TASKS      10
 #define KERNEL_STACK_SIZE	1024
@@ -19,6 +20,7 @@ struct task_struct {
   page_table_entry * dir_pages_baseAddr;
   int kernel_esp;
   int quantum;
+  struct stats proc_stats;
   enum state_t estat;
   struct list_head list;
 };
