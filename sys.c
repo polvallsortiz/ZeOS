@@ -177,7 +177,7 @@ void sys_exit()
     current()->PID = -1;
     list_add_tail(&(current()->list),&freequeue);
     //update_process_state_rr(current(),&freequeue);
-    sched_next_rr();
+    sched_next();
 }
 
 int sys_write(int fd, char * buffer, int size) {

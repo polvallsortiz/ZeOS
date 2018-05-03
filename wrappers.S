@@ -64,3 +64,4 @@ ENTRY(get_stats)
      popl %ebx
      popl %ebp
      ret
+

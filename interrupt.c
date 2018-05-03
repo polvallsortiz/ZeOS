@@ -110,6 +110,7 @@ void keyboard_routine() {
 }
 
 void clock_routine() {
+    zeos_update_read_console_emul();
     zeos_show_clock();
     ++zeos_ticks;
     schedule();
