@@ -74,7 +74,12 @@ int __attribute__ ((__section__(".text.main")))
   int pidactual = getpid();
   int res2;
   if(pidactual != 1) {
-      res2 += mix_intensiu();
+      //CPU INTENSIVE UNCOMMENT NEXT LINE
+      //res2 += cpu_intensiu;
+      //IO INTENSIVE UNCOMMENT NEXT LINE
+      //res2 += io_intensiu();
+      //MIX OF CPU IO UNCOMMENT NEXT LINE
+      //res2 += mix_intensiu();
       print_stats(pidactual);
       if(pidactual == 1003) print_stats(0);
       exit();
