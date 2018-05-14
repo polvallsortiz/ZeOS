@@ -1,0 +1,41 @@
+Hemos hecho 3 reparticiones de trabajo diferentes: una carga de trabajo intensiva para la CPU, 
+otra con llamadas a sistema bloqueantes de larga duracion y otra mezcla entre las dos enteriores.
+
+CPU INTENSIVA:
+	Para hacer esta estrategia hemos usado tres procesos que ejecutan un bucle for de 10000000 iteraciones,
+donde en cada iteración se hace una multiplicación. Hemos d'estudiar la reparticion del tiempo de CPU entre
+los 3 procesos creados. 
+Usando una politica de RR hemos conseguido unos tiempos iguales para los 3 procesos. Los 3 procesos se
+van repartiendo el tiempo de la CPU a medida que se les acaba el quantum, cuando a se le termina este pasa
+de estado RUN a READY y el primero de la cola READY pasa a RUN. Como todos los procesos tienen el mismo 
+quantum obtenemos el mismo tiempo en user y ready en los 3 procesos.
+	Para la politica de FCFS los resultados varían. El primer proceso que entra en RUN no cambia 
+nunca de estado hasta que termina de hacer su trabajo, es entonces cuando el siguiente proceso pasa 
+a RUN y ejecuta todo lo que deba hacer y asi con los siguientes procesos.
+Es por eso que observamos como el primer proceso es capaz de terminar su trabajo mucho mas rapido, y
+los siguientes acumulan mas tiempo de READY.
+Como conclusion en trabajos intensivos de CPU diriamos que RR seria mas eficaz si queremos que los procesos
+acaben todos a la vez, en cambio si no nos importa que diferentes procesos terminen antes que otros, FCFS
+seria lo ideal.
+
+I/O INTENSIVO:
+	Para probar esta carga de trabajo enfocada a las llamadas bloqueantes hemos creado 3 procesos los cuales 
+llaman a read que bloquea el proceso durante 1000 ticks.
+Debido a que no tenemos los tiempos que pasan los procesos en blocked, supondremos que el tiempo que pasa en modo 
+system corresponde aproximadamente al tiempo que pasa en blocked.
+Con ambas planificaciones obtenemos los mismos resultados ya que cuando un proceso pasa a bloqueado, el siguiente
+en la cola de READY pasa a RUN. Por lo tanto los 3 procesos se bloquean casi a la vez independientemente de si
+usamos RR o FCFS. 
+	Hemos deducido que ZeOS solo puede tratar una llamada a sistema bloqueante a la vez y es por eso que 
+los 3 procesos se quedan bloqueados durante diferente tiempo. El primer proceso es con el que ZeOS empezara a tratar
+y los otros dos deberan esperar a que haya acabado para que su llamada sea tratada. 
+
+MIXTO:
+	Y por ultimo, para probar esto hemos hecho que los 3 procesos hagan el trabajo anterior pero reducido
+cada uno a la mitad.
+	Por lo tanto las conclusiones son tambien una mezcla de las dos anteriores. 
+Con RR vemos que el tiempo en READY de cada proceso es igual para los tres ya que tienen el mismo quantum, y nos pasa
+exactamente lo mismo con las llamadas bloqueantes que anteriormente.
+Con FCFS obtenemos los mismos resultados para READY que en la cpu intensiva ya que el primer proceso ejecutara 
+su codigo usuario primero y hasta entonces (o hasta que se bloquee) no empezará el segundo. Sus tiempos de blocked
+son iguales a los obtenidos con RR ya que se tracta de misma manera.
