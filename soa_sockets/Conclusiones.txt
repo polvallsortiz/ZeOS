@@ -1,0 +1,17 @@
+Para realizar las pruebas hemos medido diferentes lanzamientos de mensajes con diferentes parámetros.
+Para tener un punto en común con el que comparar hemos hecho que todas las pruebas sean con el mismo número de clientes, 
+en nuestro caso serán 20. Como podemos ver claro, el mejor resultado lo obtenemos con el servidor concurrente usando threads. 
+
+En el primer caso de un servidor sequencial es dónde obtenemos peores resultados ya que no tratamos los mensajes de forma concurrente alguna. 
+Podemos ver como el punto de saturación está alrededor de 6000 mensajes por cliente.
+Por otra banda, cuando empezamos a usar metodologias de concurrencia como puede ser la creación de procesos hijos para así tratar
+diferentes connexiones a la vez, es cuando empezamos a obtener mejores resultados. 
+El primer servidor con fork(), obtenemos mejores resultados pero vemos que al no tener un límite máximo de connexiones el servidor 
+se pone a tratar demasiadas y crea demasiados procesos hijos y es entonces cuando tenemos mucho overhead y deja de ser eficaz.
+A continuación tenemos un servidor que usa la misma filosofia que anteriormente pero esta vez ponemos un máximo de connexiones activas, es decir,
+un numero máximo de hijos que podemos tener para asi reducir el tiempo de fork y join. En esta versión obtenemos mejores resultados en gran numeros de clientes.
+
+Por último tenemos el servidor mas eficaz de los 4. En este caso creamos una pool de threads y un bufer circular dónde iremos añadiendo
+cada connexión aceptada y lista para ser tratada. Los threads cogerán uno por uno del buffer circular estas distintas connexiones y las irán tratando.
+En este caso no tenemos penalización por fork y join, por lo tanto ganamos mucho mas tiempo y como podemos ver en los gráficos esto queda reflejado.
+
