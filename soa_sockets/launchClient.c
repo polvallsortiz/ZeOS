@@ -19,8 +19,11 @@ void trat_sigchld (int signum) {
 }
 
 main(int argc, char *argv[]) {
-    int i, nclients, pidh, fd;
     char buf[80];
+
+    sprintf(buf, "%i\n",getpid());
+    write(1,buf,strlen(buf));
+    int i, nclients, pidh, fd;
     int msec_elapsed;
     struct timeval init_t, end_t;
 

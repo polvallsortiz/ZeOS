@@ -1,50 +1,20 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <semaphore.h>
-#include <pthread.h>
+#include <signal.h>
 
-#define MAXSIZE 200
-#define NUMTHREADS 50
+#define MAX_CLIENTS 50
+int current_clients = 0;
 
-typedef struct {
-    int buff[200];
-    int r;
-    int w;
-    int size;
-}buffer_circular;
-
-buffer_circular circular;
-sem_t work;
-sem_t buf;
-
-void addConnection(int FD) {
-    while (circular.size > MAXSIZE);
-    circular.buff[circular.w] = FD;
-    circular.w = (circular.w + 1)%MAXSIZE;
-    ++circular.size;
-    sem_post(&work);
-}
-
-void makeConnection() {
-    int FD = circular.buff[circular.r];
-    circular.r = (circular.r + 1)%MAXSIZE;
-    --circular.size;
-    sem_post(&buf);
-    doService(FD);
-}
-
-void *gestor() {
-    while(1) {
-        sem_wait(&work);
-        makeConnection();
-    }
-}
-
-void initializeThreads() {
-    for(int i = 0; i < NUMTHREADS; ++i) {
-        pthread_t p;
-        pthread_create(&p,NULL,&gestor,NULL);
+doServiceFork(int fd) {
+    char buff[80];
+    sprintf(buff,"Current : %i\n",current_clients);
+    write(2,buff,strlen(buff));
+    ++current_clients;
+    int pid = fork();
+    if(pid == 0) {
+        doService(fd);
+        exit(1);
     }
 }
 
@@ -77,23 +47,22 @@ doService(int fd) {
 
 }
 
+void sigchild(int signum) {
+    char buff[80];
+    sprintf(buff,"SIGCHILD : %i\n",current_clients);
+    write(2,buff,strlen(buff));
+    current_clients--;
+}
 
-int main (int argc, char *argv[])
+
+main (int argc, char *argv[])
 {
+    signal(SIGCHLD, sigchild);
     int socketFD;
     int connectionFD;
     char buffer[80];
     int ret;
     int port;
-    circular.r = 0;
-    circular.w = 0;
-    circular.size = 0;
-
-    //SEMAPHORES
-    sem_init(&work,0,0);
-    sem_init(&buf,0,1);
-
-    initializeThreads();
 
 
     if (argc != 2)
@@ -110,9 +79,6 @@ int main (int argc, char *argv[])
         perror ("Error creating socket\n");
         exit (1);
     }
-    char buff2[200];
-    sprintf(buff2, "Ready to accept");
-    write(1, buff2, strlen(buff2));
 
     while (1) {
         connectionFD = acceptNewConnections (socketFD);
@@ -122,14 +88,19 @@ int main (int argc, char *argv[])
             deleteSocket(socketFD);
             exit (1);
         }
-
-        //doServiceFork(connectionFD);
-        addConnection(connectionFD);
+        if(current_clients >= MAX_CLIENTS) {
+            //WAIT CHILD FINISH
+            char buff[80];
+            sprintf(buff,"Waiting amb pid : %i\n",getpid());
+            write(2,buff,strlen(buff));
+            while(waitpid(-1,NULL,WNOHANG) > 0); //waits a child finish
+            sprintf(buff,"Fora amb pid : %i\n",getpid());
+            write(2,buff,strlen(buff));
+        }
+        char buff[80];
+        sprintf(buff,"Current : %i\n",current_clients);
+        write(2,buff,strlen(buff));
+        doService(connectionFD);
     }
 
 }
-
-
-
-
-
